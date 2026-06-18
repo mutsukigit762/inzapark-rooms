@@ -37,10 +37,7 @@
     border-bottom: 1px solid var(--border);
   }
 
-  .header-top {
-    padding: 16px 20px 12px;
-    text-align: center;
-  }
+  .header-top { padding: 16px 20px 12px; text-align: center; }
 
   header h1 {
     font-size: 15px;
@@ -49,10 +46,7 @@
     color: var(--sub);
   }
 
-  .tabs {
-    display: flex;
-    border-top: 1px solid var(--border);
-  }
+  .tabs { display: flex; border-top: 1px solid var(--border); }
 
   .tab-btn {
     flex: 1;
@@ -68,23 +62,31 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  .tab-btn.active {
-    color: var(--text);
-    border-bottom-color: var(--accent);
+  .tab-btn.active { color: var(--text); border-bottom-color: var(--accent); }
+
+  .main-wrapper {
+    width: 100%;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .main-slider {
+    display: flex;
+    width: 200%;
+    height: 100%;
+    transition: transform 0.3s ease;
   }
 
   .main {
-    width: 100%;
-    max-width: 420px;
+    width: 50%;
     padding: 20px 16px;
-    flex: 1;
     display: flex;
     flex-direction: column;
     gap: 20px;
+    flex-shrink: 0;
   }
 
-  .tab-panel { display: none; flex-direction: column; gap: 20px; }
-  .tab-panel.active { display: flex; }
+  .tab-panel { display: flex; flex-direction: column; gap: 20px; }
 
   .section-label {
     font-size: 11px;
@@ -202,17 +204,9 @@
   .submit-btn:disabled { opacity: 0.35; cursor: default; }
   .submit-btn:not(:disabled):active { opacity: 0.8; }
 
-  .sync-status {
-    font-size: 11px;
-    color: var(--sub);
-    text-align: center;
-    min-height: 16px;
-  }
+  .sync-status { font-size: 11px; color: var(--sub); text-align: center; min-height: 16px; }
 
-  .filter-bar {
-    display: flex;
-    gap: 6px;
-  }
+  .filter-bar { display: flex; gap: 6px; }
 
   .filter-btn {
     padding: 7px 14px;
@@ -232,22 +226,9 @@
   .filter-btn.active-season { background: var(--season); color: #fff; border-color: var(--season); }
   .filter-btn.active-unknown { background: var(--unknown); color: #fff; border-color: var(--unknown); }
 
-  .list-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .list-count {
-    font-size: 12px;
-    color: var(--sub);
-  }
-
-  .log-list {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
+  .list-header { display: flex; justify-content: space-between; align-items: center; }
+  .list-count { font-size: 12px; color: var(--sub); }
+  .log-list { display: flex; flex-direction: column; gap: 6px; }
 
   .log-item {
     display: flex;
@@ -259,39 +240,15 @@
     border: 1px solid var(--border);
   }
 
-  .log-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
+  .log-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
   .dot-south { background: var(--south); }
   .dot-season { background: var(--season); }
   .dot-unknown { background: var(--unknown); }
 
-  .log-room {
-    font-size: 18px;
-    font-weight: 400;
-    font-variant-numeric: tabular-nums;
-    flex: 1;
-  }
-
-  .log-meta {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 2px;
-  }
-
-  .log-tong {
-    font-size: 11px;
-    color: var(--sub);
-  }
-
-  .log-date {
-    font-size: 10px;
-    color: var(--border);
-  }
+  .log-room { font-size: 18px; font-weight: 400; font-variant-numeric: tabular-nums; flex: 1; }
+  .log-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+  .log-tong { font-size: 11px; color: var(--sub); }
+  .log-date { font-size: 10px; color: var(--border); }
 
   .log-del {
     background: none;
@@ -304,12 +261,7 @@
   }
   .log-del:active { color: #c0392b; }
 
-  .empty-state {
-    text-align: center;
-    padding: 40px 0;
-    color: var(--border);
-    font-size: 14px;
-  }
+  .empty-state { text-align: center; padding: 40px 0; color: var(--border); font-size: 14px; }
 
   #toast {
     position: fixed;
@@ -327,13 +279,8 @@
     white-space: nowrap;
     z-index: 100;
   }
-  #toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-  #toast.error {
-    background: #c0392b;
-  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  #toast.error { background: #c0392b; }
 </style>
 </head>
 <body>
@@ -348,10 +295,11 @@
   </div>
 </header>
 
+<div class="main-wrapper">
+<div class="main-slider" id="mainSlider">
+
 <div class="main">
-
-  <div class="tab-panel active" id="panel-input">
-
+  <div class="tab-panel" id="panel-input">
     <div>
       <span class="section-label">棟</span>
       <div class="tong-toggle">
@@ -360,7 +308,6 @@
         <button class="tong-btn" id="btn-unknown" onclick="selectTong('unknown')">インザパーク<br>（棟不明）</button>
       </div>
     </div>
-
     <div>
       <span class="section-label">部屋番号</span>
       <div class="number-display">
@@ -368,7 +315,6 @@
         <button class="clear-btn" onclick="clearNum()">⌫</button>
       </div>
     </div>
-
     <div class="keypad">
       <button class="key" onclick="pressKey('7')">7</button>
       <button class="key" onclick="pressKey('8')">8</button>
@@ -383,30 +329,28 @@
       <button class="key" onclick="pressKey('0')">0</button>
       <button class="key key-del" onclick="deleteKey()">⌫</button>
     </div>
-
     <button class="submit-btn" id="submitBtn" onclick="submit()" disabled>登録</button>
     <div class="sync-status" id="syncStatus"></div>
-
   </div>
+</div>
 
+<div class="main">
   <div class="tab-panel" id="panel-list">
-
     <div class="filter-bar">
       <button class="filter-btn active-all" id="f-all" onclick="setFilter('all')">すべて</button>
       <button class="filter-btn" id="f-south" onclick="setFilter('south')">サウス</button>
       <button class="filter-btn" id="f-season" onclick="setFilter('season')">シーズン</button>
       <button class="filter-btn" id="f-unknown" onclick="setFilter('unknown')">不明</button>
     </div>
-
     <div class="list-header">
       <span class="section-label" style="margin-bottom:0">登録データ</span>
       <span class="list-count" id="listCount">0件</span>
     </div>
-
     <div class="log-list" id="logList"></div>
-
   </div>
+</div>
 
+</div>
 </div>
 
 <div id="toast"></div>
@@ -456,13 +400,39 @@ onSnapshot(q, (snap) => {
   console.error(err);
 });
 
-window.switchTab = function(tab) {
+let currentTab = 'input';
+function goToTab(tab) {
+  currentTab = tab;
+  const slider = document.getElementById('mainSlider');
+  slider.style.transform = tab === 'input' ? 'translateX(0)' : 'translateX(-50%)';
   document.querySelectorAll('.tab-btn').forEach((b, i) => {
     b.classList.toggle('active', (i === 0 && tab === 'input') || (i === 1 && tab === 'list'));
   });
-  document.getElementById('panel-input').classList.toggle('active', tab === 'input');
-  document.getElementById('panel-list').classList.toggle('active', tab === 'list');
-};
+}
+window.switchTab = goToTab;
+
+(function() {
+  const wrapper = document.querySelector('.main-wrapper');
+  let startX = 0, startY = 0, locked = false;
+  wrapper.addEventListener('touchstart', e => {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    locked = false;
+  }, { passive: true });
+  wrapper.addEventListener('touchend', e => {
+    if (locked) return;
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+    if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return;
+    if (dx < 0 && currentTab === 'input') goToTab('list');
+    if (dx > 0 && currentTab === 'list') goToTab('input');
+  }, { passive: true });
+  wrapper.addEventListener('touchmove', e => {
+    const dx = Math.abs(e.touches[0].clientX - startX);
+    const dy = Math.abs(e.touches[0].clientY - startY);
+    if (!locked && dy > dx) locked = true;
+  }, { passive: true });
+})();
 
 window.selectTong = function(tong) {
   currentTong = tong;
@@ -543,25 +513,22 @@ window.setFilter = function(f) {
 function formatDate(ts) {
   if (!ts) return '';
   const d = ts.toDate ? ts.toDate() : new Date(ts);
-  const m = d.getMonth() + 1;
-  const day = d.getDate();
-  return (m + '/' + day);
+  return (d.getMonth() + 1) + '/' + d.getDate();
 }
 
 function renderList() {
   const filtered = currentFilter === 'all'
     ? allDocs
     : allDocs.filter(d => d.tong === currentFilter);
-
   document.getElementById('listCount').textContent = filtered.length + '件';
-
   const list = document.getElementById('logList');
   if (filtered.length === 0) {
     list.innerHTML = '<div class="empty-state">データなし</div>';
     return;
   }
-
-  list.innerHTML = filtered.map(d => '<div class="log-item"><span class="log-dot ' + (TONG_DOT[d.tong] || 'dot-unknown') + '"></span><span class="log-room">' + d.room + '</span><div class="log-meta"><span class="log-tong">' + (TONG_LABEL[d.tong] || d.tong) + '</span><span class="log-date">' + formatDate(d.createdAt) + '</span></div><button class="log-del" onclick="deleteLog(\'' + d.id + '\')">×</button></div>').join('');
+  list.innerHTML = filtered.map(d =>
+    '<div class="log-item"><span class="log-dot ' + (TONG_DOT[d.tong] || 'dot-unknown') + '"></span><span class="log-room">' + d.room + '</span><div class="log-meta"><span class="log-tong">' + (TONG_LABEL[d.tong] || d.tong) + '</span><span class="log-date">' + formatDate(d.createdAt) + '</span></div><button class="log-del" onclick="deleteLog(\'' + d.id + '\')">x</button></div>'
+  ).join('');
 }
 
 function setSyncStatus(msg) {
