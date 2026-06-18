@@ -21,10 +21,16 @@
     --accent: #c8a97a;
   }
 
+  html, body {
+    overscroll-behavior: none;
+  }
+
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
     background: var(--bg);
     min-height: 100dvh;
+    height: 100dvh;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -84,6 +90,9 @@
     flex-direction: column;
     gap: 20px;
     flex-shrink: 0;
+    overflow-y: auto;
+    height: 100%;
+    overscroll-behavior: contain;
   }
 
   .tab-panel { display: flex; flex-direction: column; gap: 20px; }
