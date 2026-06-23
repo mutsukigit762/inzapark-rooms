@@ -2,10 +2,8 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>インザパーク 部屋番号収集</title>
-<link rel="apple-touch-icon" href="icon.jpg">
-<link rel="icon" href="icon.jpg">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -23,16 +21,10 @@
     --accent: #c8a97a;
   }
 
-  html, body {
-    overscroll-behavior: none;
-  }
-
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
     background: var(--bg);
     min-height: 100dvh;
-    height: 100dvh;
-    overflow: hidden;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -45,7 +37,10 @@
     border-bottom: 1px solid var(--border);
   }
 
-  .header-top { padding: 16px 20px 12px; text-align: center; }
+  .header-top {
+    padding: 16px 20px 12px;
+    text-align: center;
+  }
 
   header h1 {
     font-size: 15px;
@@ -54,7 +49,11 @@
     color: var(--sub);
   }
 
-  .tabs { display: flex; border-top: 1px solid var(--border); }
+  /* タブ */
+  .tabs {
+    display: flex;
+    border-top: 1px solid var(--border);
+  }
 
   .tab-btn {
     flex: 1;
@@ -70,35 +69,25 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  .tab-btn.active { color: var(--text); border-bottom-color: var(--accent); }
-
-  .main-wrapper {
-    width: 100%;
-    flex: 1;
-    overflow: hidden;
-  }
-
-  .main-slider {
-    display: flex;
-    width: 200%;
-    height: 100%;
-    transition: transform 0.3s ease;
+  .tab-btn.active {
+    color: var(--text);
+    border-bottom-color: var(--accent);
   }
 
   .main {
-    width: 50%;
+    width: 100%;
+    max-width: 420px;
     padding: 20px 16px;
+    flex: 1;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    flex-shrink: 0;
-    overflow-y: auto;
-    height: 100%;
-    overscroll-behavior: contain;
   }
 
-  .tab-panel { display: flex; flex-direction: column; gap: 20px; }
+  .tab-panel { display: none; flex-direction: column; gap: 20px; }
+  .tab-panel.active { display: flex; }
 
+  /* 棟トグル */
   .section-label {
     font-size: 11px;
     font-weight: 600;
@@ -138,6 +127,7 @@
   .tong-btn.active-season { background: var(--season); color: #fff; }
   .tong-btn.active-unknown { background: var(--unknown); color: #fff; }
 
+  /* 番号表示 */
   .number-display {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -170,6 +160,7 @@
     opacity: 0.6;
   }
 
+  /* テンキー */
   .keypad {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -197,6 +188,7 @@
   .key.key-del { font-size: 18px; color: var(--sub); }
   .key.key-empty { background: transparent; cursor: default; }
 
+  /* 登録ボタン */
   .submit-btn {
     width: 100%;
     padding: 16px;
@@ -215,9 +207,18 @@
   .submit-btn:disabled { opacity: 0.35; cursor: default; }
   .submit-btn:not(:disabled):active { opacity: 0.8; }
 
-  .sync-status { font-size: 11px; color: var(--sub); text-align: center; min-height: 16px; }
+  .sync-status {
+    font-size: 11px;
+    color: var(--sub);
+    text-align: center;
+    min-height: 16px;
+  }
 
-  .filter-bar { display: flex; gap: 6px; }
+  /* 一覧タブ フィルター */
+  .filter-bar {
+    display: flex;
+    gap: 6px;
+  }
 
   .filter-btn {
     padding: 7px 14px;
@@ -237,9 +238,23 @@
   .filter-btn.active-season { background: var(--season); color: #fff; border-color: var(--season); }
   .filter-btn.active-unknown { background: var(--unknown); color: #fff; border-color: var(--unknown); }
 
-  .list-header { display: flex; justify-content: space-between; align-items: center; }
-  .list-count { font-size: 12px; color: var(--sub); }
-  .log-list { display: flex; flex-direction: column; gap: 6px; }
+  /* ログ一覧 */
+  .list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .list-count {
+    font-size: 12px;
+    color: var(--sub);
+  }
+
+  .log-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
 
   .log-item {
     display: flex;
@@ -251,15 +266,39 @@
     border: 1px solid var(--border);
   }
 
-  .log-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .log-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
   .dot-south { background: var(--south); }
   .dot-season { background: var(--season); }
   .dot-unknown { background: var(--unknown); }
 
-  .log-room { font-size: 18px; font-weight: 400; font-variant-numeric: tabular-nums; flex: 1; }
-  .log-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
-  .log-tong { font-size: 11px; color: var(--sub); }
-  .log-date { font-size: 10px; color: var(--border); }
+  .log-room {
+    font-size: 18px;
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+    flex: 1;
+  }
+
+  .log-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+  }
+
+  .log-tong {
+    font-size: 11px;
+    color: var(--sub);
+  }
+
+  .log-date {
+    font-size: 10px;
+    color: var(--border);
+  }
 
   .log-del {
     background: none;
@@ -272,8 +311,14 @@
   }
   .log-del:active { color: #c0392b; }
 
-  .empty-state { text-align: center; padding: 40px 0; color: var(--border); font-size: 14px; }
+  .empty-state {
+    text-align: center;
+    padding: 40px 0;
+    color: var(--border);
+    font-size: 14px;
+  }
 
+  /* トースト */
   #toast {
     position: fixed;
     bottom: 32px;
@@ -290,8 +335,14 @@
     white-space: nowrap;
     z-index: 100;
   }
-  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-  #toast.error { background: #c0392b; }
+  #toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  #toast.error {
+    background: #c0392b;
+  }
 </style>
 </head>
 <body>
@@ -306,11 +357,11 @@
   </div>
 </header>
 
-<div class="main-wrapper">
-<div class="main-slider" id="mainSlider">
-
 <div class="main">
-  <div class="tab-panel" id="panel-input">
+
+  <!-- 入力タブ -->
+  <div class="tab-panel active" id="panel-input">
+
     <div>
       <span class="section-label">棟</span>
       <div class="tong-toggle">
@@ -319,6 +370,7 @@
         <button class="tong-btn" id="btn-unknown" onclick="selectTong('unknown')">インザパーク<br>（棟不明）</button>
       </div>
     </div>
+
     <div>
       <span class="section-label">部屋番号</span>
       <div class="number-display">
@@ -326,6 +378,7 @@
         <button class="clear-btn" onclick="clearNum()">⌫</button>
       </div>
     </div>
+
     <div class="keypad">
       <button class="key" onclick="pressKey('7')">7</button>
       <button class="key" onclick="pressKey('8')">8</button>
@@ -340,28 +393,31 @@
       <button class="key" onclick="pressKey('0')">0</button>
       <button class="key key-del" onclick="deleteKey()">⌫</button>
     </div>
+
     <button class="submit-btn" id="submitBtn" onclick="submit()" disabled>登録</button>
     <div class="sync-status" id="syncStatus"></div>
-  </div>
-</div>
 
-<div class="main">
+  </div>
+
+  <!-- 一覧タブ -->
   <div class="tab-panel" id="panel-list">
+
     <div class="filter-bar">
       <button class="filter-btn active-all" id="f-all" onclick="setFilter('all')">すべて</button>
       <button class="filter-btn" id="f-south" onclick="setFilter('south')">サウス</button>
       <button class="filter-btn" id="f-season" onclick="setFilter('season')">シーズン</button>
-      <button class="filter-btn" id="f-unknown" onclick="setFilter('unknown')">インザパーク<br>（棟不明）</button>
+      <button class="filter-btn" id="f-unknown" onclick="setFilter('unknown')">不明</button>
     </div>
+
     <div class="list-header">
       <span class="section-label" style="margin-bottom:0">登録データ</span>
       <span class="list-count" id="listCount">0件</span>
     </div>
-    <div class="log-list" id="logList"></div>
-  </div>
-</div>
 
-</div>
+    <div class="log-list" id="logList"></div>
+
+  </div>
+
 </div>
 
 <div id="toast"></div>
@@ -400,6 +456,7 @@ const TONG_DOT = {
   unknown: 'dot-unknown'
 };
 
+// 全件リアルタイム購読
 const q = query(collection(db, COLL), orderBy('createdAt', 'desc'));
 
 onSnapshot(q, (snap) => {
@@ -411,40 +468,16 @@ onSnapshot(q, (snap) => {
   console.error(err);
 });
 
-let currentTab = 'input';
-function goToTab(tab) {
-  currentTab = tab;
-  const slider = document.getElementById('mainSlider');
-  slider.style.transform = tab === 'input' ? 'translateX(0)' : 'translateX(-50%)';
+// タブ切り替え
+window.switchTab = function(tab) {
   document.querySelectorAll('.tab-btn').forEach((b, i) => {
     b.classList.toggle('active', (i === 0 && tab === 'input') || (i === 1 && tab === 'list'));
   });
-}
-window.switchTab = goToTab;
+  document.getElementById('panel-input').classList.toggle('active', tab === 'input');
+  document.getElementById('panel-list').classList.toggle('active', tab === 'list');
+};
 
-(function() {
-  const wrapper = document.querySelector('.main-wrapper');
-  let startX = 0, startY = 0, locked = false;
-  wrapper.addEventListener('touchstart', e => {
-    startX = e.touches[0].clientX;
-    startY = e.touches[0].clientY;
-    locked = false;
-  }, { passive: true });
-  wrapper.addEventListener('touchend', e => {
-    if (locked) return;
-    const dx = e.changedTouches[0].clientX - startX;
-    const dy = e.changedTouches[0].clientY - startY;
-    if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return;
-    if (dx < 0 && currentTab === 'input') goToTab('list');
-    if (dx > 0 && currentTab === 'list') goToTab('input');
-  }, { passive: true });
-  wrapper.addEventListener('touchmove', e => {
-    const dx = Math.abs(e.touches[0].clientX - startX);
-    const dy = Math.abs(e.touches[0].clientY - startY);
-    if (!locked && dy > dx) locked = true;
-  }, { passive: true });
-})();
-
+// 棟選択
 window.selectTong = function(tong) {
   currentTong = tong;
   ['south', 'season', 'unknown'].forEach(t => {
@@ -453,6 +486,7 @@ window.selectTong = function(tong) {
   });
 };
 
+// テンキー
 window.pressKey = function(k) {
   if (currentNum.length >= 4) return;
   currentNum += k;
@@ -481,13 +515,17 @@ function updateDisplay() {
   document.getElementById('submitBtn').disabled = currentNum === '';
 }
 
+// 登録（重複チェックあり）
 window.submit = async function() {
   if (!currentNum) return;
+
+  // 重複チェック
   const dup = allDocs.find(d => d.room === currentNum && d.tong === currentTong);
   if (dup) {
-    showToast(TONG_LABEL[currentTong] + ' ' + currentNum + ' はすでに登録済み', true);
+    showToast(`${TONG_LABEL[currentTong]} ${currentNum} はすでに登録済み`, true);
     return;
   }
+
   setSyncStatus('保存中…');
   try {
     await addDoc(collection(db, COLL), {
@@ -495,7 +533,7 @@ window.submit = async function() {
       tong: currentTong,
       createdAt: serverTimestamp()
     });
-    showToast(TONG_LABEL[currentTong] + ' ' + currentNum + ' を登録');
+    showToast(`${TONG_LABEL[currentTong]} ${currentNum} を登録`);
     currentNum = '';
     updateDisplay();
   } catch(e) {
@@ -504,6 +542,7 @@ window.submit = async function() {
   }
 };
 
+// 削除
 window.deleteLog = async function(id) {
   try {
     await deleteDoc(doc(db, COLL, id));
@@ -512,6 +551,7 @@ window.deleteLog = async function(id) {
   }
 };
 
+// フィルター
 window.setFilter = function(f) {
   currentFilter = f;
   ['all', 'south', 'season', 'unknown'].forEach(k => {
@@ -524,22 +564,35 @@ window.setFilter = function(f) {
 function formatDate(ts) {
   if (!ts) return '';
   const d = ts.toDate ? ts.toDate() : new Date(ts);
-  return (d.getMonth() + 1) + '/' + d.getDate();
+  const m = d.getMonth() + 1;
+  const day = d.getDate();
+  return `${m}/${day}`;
 }
 
 function renderList() {
   const filtered = currentFilter === 'all'
     ? allDocs
     : allDocs.filter(d => d.tong === currentFilter);
+
   document.getElementById('listCount').textContent = filtered.length + '件';
+
   const list = document.getElementById('logList');
   if (filtered.length === 0) {
     list.innerHTML = '<div class="empty-state">データなし</div>';
     return;
   }
-  list.innerHTML = filtered.map(d =>
-    '<div class="log-item"><span class="log-dot ' + (TONG_DOT[d.tong] || 'dot-unknown') + '"></span><span class="log-room">' + d.room + '</span><div class="log-meta"><span class="log-tong">' + (TONG_LABEL[d.tong] || d.tong) + '</span><span class="log-date">' + formatDate(d.createdAt) + '</span></div><button class="log-del" onclick="deleteLog(\'' + d.id + '\')">x</button></div>'
-  ).join('');
+
+  list.innerHTML = filtered.map(d => `
+    <div class="log-item">
+      <span class="log-dot ${TONG_DOT[d.tong] || 'dot-unknown'}"></span>
+      <span class="log-room">${d.room}</span>
+      <div class="log-meta">
+        <span class="log-tong">${TONG_LABEL[d.tong] || d.tong}</span>
+        <span class="log-date">${formatDate(d.createdAt)}</span>
+      </div>
+      <button class="log-del" onclick="deleteLog('${d.id}')">×</button>
+    </div>
+  `).join('');
 }
 
 function setSyncStatus(msg) {
@@ -547,12 +600,12 @@ function setSyncStatus(msg) {
 }
 
 let toastTimer;
-function showToast(msg, isError) {
+function showToast(msg, isError = false) {
   const el = document.getElementById('toast');
   el.textContent = msg;
   el.className = isError ? 'error show' : 'show';
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(function() { el.className = ''; }, 2500);
+  toastTimer = setTimeout(() => el.className = '', 2500);
 }
 </script>
 </body>
