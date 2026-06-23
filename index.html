@@ -283,6 +283,9 @@
     flex: 1;
   }
 
+  .log-room.room-season { color: var(--season); }
+  .log-room.room-other { color: var(--south); }
+
   .log-meta {
     display: flex;
     flex-direction: column;
@@ -503,6 +506,32 @@ window.clearNum = function() {
   updateDisplay();
 };
 
+// シーズンテラスの階ごとの番号範囲
+const SEASON_RANGES = {
+  1: [118, 123],
+  2: [218, 233],
+  3: [318, 333],
+  4: [418, 435],
+  5: [518, 534],
+  6: [618, 633],
+  7: [717, 731],
+  8: [815, 827],
+  9: [914, 925],
+  10: [1013, 1022],
+  11: [1111, 1120],
+  12: [1211, 1220]
+};
+
+function isSeasonNumber(numStr) {
+  const n = parseInt(numStr, 10);
+  if (isNaN(n)) return false;
+  // 階番号 = 下2桁を除いた部分
+  const floor = Math.floor(n / 100);
+  const range = SEASON_RANGES[floor];
+  if (!range) return false;
+  return n >= range[0] && n <= range[1];
+}
+
 function updateDisplay() {
   const el = document.getElementById('numDisplay');
   if (currentNum === '') {
@@ -585,7 +614,7 @@ function renderList() {
   list.innerHTML = filtered.map(d => `
     <div class="log-item">
       <span class="log-dot ${TONG_DOT[d.tong] || 'dot-unknown'}"></span>
-      <span class="log-room">${d.room}</span>
+      <span class="log-room ${isSeasonNumber(d.room) ? 'room-season' : 'room-other'}">${d.room}</span>
       <div class="log-meta">
         <span class="log-tong">${TONG_LABEL[d.tong] || d.tong}</span>
         <span class="log-date">${formatDate(d.createdAt)}</span>
